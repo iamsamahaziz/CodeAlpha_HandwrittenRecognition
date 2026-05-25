@@ -1,11 +1,6 @@
-"""
-CodeAlpha Internship - Task 3: Handwritten Character Recognition
-================================================================
-Objective: Identify handwritten digits using Machine Learning.
-Approach: SVM, Random Forest, KNN and MLP on MNIST dataset.
-Dataset: MNIST (via sklearn - 70,000 images of handwritten digits 0-9)
-Author: Samah AZIZ
-"""
+# Handwritten Digit Recognition - CodeAlpha ML Internship
+# Using SVM, Random Forest, KNN and MLP on MNIST
+# Author: Samah AZIZ
 
 import numpy as np
 import matplotlib
@@ -30,20 +25,16 @@ print("=" * 60)
 print("TASK 3: HANDWRITTEN CHARACTER RECOGNITION")
 print("=" * 60)
 
-# ============================================================
-# 1. LOAD MNIST DATASET
-# ============================================================
-print("\n" + "=" * 60)
-print("1. LOADING MNIST DATASET")
-print("=" * 60)
+# --- Loading MNIST ---
+print("\n--- Loading MNIST dataset ---")
 
 print("Downloading MNIST from OpenML (this may take a moment)...")
 mnist = fetch_openml('mnist_784', version=1, as_frame=False, parser='auto')
 X, y = mnist.data, mnist.target.astype(int)
 
-print(f"[OK] Total samples: {X.shape[0]}")
-print(f"[OK] Image dimensions: 28x28 = {X.shape[1]} features")
-print(f"[OK] Classes: {len(np.unique(y))} (digits 0-9)")
+print(f"Total samples: {X.shape[0]}")
+print(f"Image dimensions: 28x28 = {X.shape[1]} features")
+print(f"Classes: {len(np.unique(y))} (digits 0-9)")
 
 # Use a subset for faster training (10,000 train + 2,000 test)
 X_train_full, X_test, y_train_full, y_test = train_test_split(
@@ -53,15 +44,10 @@ X_train, _, y_train, _ = train_test_split(
     X_train_full, y_train_full, train_size=10000, random_state=42, stratify=y_train_full
 )
 
-print(f"[OK] Training samples: {X_train.shape[0]}")
-print(f"[OK] Test samples: {X_test.shape[0]}")
+print(f"Training samples: {X_train.shape[0]}")
+print(f"Test samples: {X_test.shape[0]}")
 
-# ============================================================
-# 2. VISUALIZE SAMPLE IMAGES
-# ============================================================
-print("\n" + "=" * 60)
-print("2. VISUALIZING SAMPLE IMAGES")
-print("=" * 60)
+# --- Visualizing samples ---
 
 fig, axes = plt.subplots(2, 5, figsize=(12, 5))
 for i, ax in enumerate(axes.flat):
@@ -74,7 +60,7 @@ plt.suptitle('Sample MNIST Handwritten Digits', fontsize=16, fontweight='bold')
 plt.tight_layout()
 plt.savefig('sample_images.png', dpi=150, bbox_inches='tight')
 plt.close()
-print("[OK] Sample images saved to 'sample_images.png'")
+print("Sample images saved.")
 
 # Class distribution
 fig, ax = plt.subplots(figsize=(10, 5))
@@ -87,14 +73,9 @@ ax.set_title('Class Distribution in Training Set', fontsize=14, fontweight='bold
 plt.tight_layout()
 plt.savefig('class_distribution.png', dpi=150, bbox_inches='tight')
 plt.close()
-print("[OK] Class distribution saved to 'class_distribution.png'")
+print("Class distribution saved.")
 
-# ============================================================
-# 3. DATA PREPROCESSING
-# ============================================================
-print("\n" + "=" * 60)
-print("3. DATA PREPROCESSING")
-print("=" * 60)
+# --- Preprocessing ---
 
 # Normalize pixel values to [0, 1]
 X_train_norm = X_train / 255.0
@@ -105,15 +86,11 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train_norm)
 X_test_scaled = scaler.transform(X_test_norm)
 
-print(f"[OK] Pixel range after normalization: [{X_train_norm.min():.1f}, {X_train_norm.max():.1f}]")
-print(f"[OK] Feature shape: {X_train_scaled.shape}")
+print(f"Pixel range after normalization: [{X_train_norm.min():.1f}, {X_train_norm.max():.1f}]")
+print(f"Feature shape: {X_train_scaled.shape}")
 
-# ============================================================
-# 4. MODEL TRAINING & EVALUATION
-# ============================================================
-print("\n" + "=" * 60)
-print("4. MODEL TRAINING & EVALUATION")
-print("=" * 60)
+# --- Training models ---
+print("\n--- Training models ---")
 
 models = {
     'SVM (RBF)': SVC(kernel='rbf', gamma='scale', C=10, random_state=42),
@@ -153,12 +130,8 @@ for name, model in models.items():
     print(f"  Recall:    {rec:.4f}")
     print(f"  F1-Score:  {f1:.4f}")
 
-# ============================================================
-# 5. MODEL COMPARISON
-# ============================================================
-print("\n" + "=" * 60)
-print("5. MODEL COMPARISON")
-print("=" * 60)
+# --- Comparison ---
+print("\n--- Model Comparison ---")
 
 import pandas as pd
 
@@ -170,15 +143,10 @@ comparison_df = pd.DataFrame({
 print(comparison_df.to_string())
 
 best_model_name = comparison_df['Accuracy'].idxmax()
-print(f"\n[BEST] Best Model: {best_model_name} "
+print(f"\nBest Model: {best_model_name} "
       f"(Accuracy: {comparison_df.loc[best_model_name, 'Accuracy']:.4f})")
 
-# ============================================================
-# 6. VISUALIZATIONS
-# ============================================================
-print("\n" + "=" * 60)
-print("6. GENERATING VISUALIZATIONS")
-print("=" * 60)
+# --- Plots ---
 
 # --- Model comparison bar chart ---
 metrics = ['Accuracy', 'Precision', 'Recall', 'F1-Score']
@@ -203,7 +171,7 @@ ax.grid(True, alpha=0.3, axis='y')
 plt.tight_layout()
 plt.savefig('model_comparison.png', dpi=150, bbox_inches='tight')
 plt.close()
-print("[OK] Model comparison saved to 'model_comparison.png'")
+print("Model comparison saved.")
 
 # --- Confusion Matrix for best model ---
 y_pred_best = results[best_model_name]['y_pred']
@@ -218,7 +186,7 @@ ax.set_title(f'Confusion Matrix - {best_model_name}', fontsize=14, fontweight='b
 plt.tight_layout()
 plt.savefig('confusion_matrix.png', dpi=150, bbox_inches='tight')
 plt.close()
-print("[OK] Confusion matrix saved to 'confusion_matrix.png'")
+print("Confusion matrix saved.")
 
 # --- Sample Predictions ---
 fig, axes = plt.subplots(2, 5, figsize=(14, 6))
@@ -240,11 +208,11 @@ plt.suptitle('Sample Predictions (Green=Correct, Red=Wrong)',
 plt.tight_layout()
 plt.savefig('sample_predictions.png', dpi=150, bbox_inches='tight')
 plt.close()
-print("[OK] Sample predictions saved to 'sample_predictions.png'")
+print("Sample predictions saved.")
 
 # --- Misclassified examples ---
 misclassified = np.where(y_pred_best != y_test)[0]
-print(f"\n[X] Total misclassified: {len(misclassified)} / {len(y_test)} "
+print(f"\nTotal misclassified: {len(misclassified)} / {len(y_test)} "
       f"({len(misclassified)/len(y_test)*100:.2f}%)")
 
 if len(misclassified) > 0:
@@ -259,16 +227,10 @@ if len(misclassified) > 0:
     plt.tight_layout()
     plt.savefig('misclassified.png', dpi=150, bbox_inches='tight')
     plt.close()
-    print("[OK] Misclassified examples saved to 'misclassified.png'")
+    print("Misclassified examples saved.")
 
-# ============================================================
-# 7. CLASSIFICATION REPORT (Best Model)
-# ============================================================
-print("\n" + "=" * 60)
-print(f"7. DETAILED CLASSIFICATION REPORT - {best_model_name}")
-print("=" * 60)
+# --- Final report ---
+print(f"\n--- Classification Report ({best_model_name}) ---")
 print(classification_report(y_test, y_pred_best, digits=4))
 
-print("\n" + "=" * 60)
-print("[OK] TASK 3 COMPLETED SUCCESSFULLY!")
-print("=" * 60)
+print("Done!")
